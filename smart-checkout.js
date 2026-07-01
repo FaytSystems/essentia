@@ -22,6 +22,60 @@
     }).format((Number(cents) || 0) / 100);
   };
 
+  const getMessage = function (value, fallback) {
+    if (!value) {
+      return fallback;
+    }
+
+    if (typeof value === "string") {
+      return value;
+    }
+
+    if (value instanceof Error && value.message) {
+      return value.message;
+    }
+
+    if (value.message && value.message !== value) {
+      return getMessage(value.message, fallback);
+    }
+
+    if (value.error && value.error !== value) {
+      return getMessage(value.error, fallback);
+    }
+
+    if (Array.isArray(value.errors) && value.errors.length) {
+      return value.errors.map(function (item) {
+        return getMessage(item, "");
+      }).filter(Boolean).join(" ");
+    }
+
+    if (Array.isArray(value) && value.length) {
+      return value.map(function (item) {
+        return getMessage(item, "");
+      }).filter(Boolean).join(" ");
+    }
+
+    if (typeof value === "object") {
+      const parts = Object.entries(value).map(function (entry) {
+        const message = getMessage(entry[1], "");
+        return message ? entry[0] + ": " + message : "";
+      }).filter(Boolean);
+
+      if (parts.length) {
+        return parts.join(" ");
+      }
+
+      try {
+        const json = JSON.stringify(value);
+        return json && json !== "{}" ? json : fallback;
+      } catch (error) {
+        return fallback;
+      }
+    }
+
+    return fallback;
+  };
+
   const setStatus = function (message, tone) {
     statusNode.textContent = message || "";
     statusNode.className = "checkout-status" + (tone ? " " + tone : "");
@@ -111,16 +165,18 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(currentPayload)
       });
-      const data = await response.json();
+      const data = await response.json().catch(function () {
+        return {};
+      });
 
       if (!response.ok) {
-        throw new Error(data.error || "Could not calculate shipping.");
+        throw new Error(getMessage(data, "Could not calculate shipping."));
       }
 
       currentRates = data.rates || [];
       renderRates(currentRates, currentPayload.quantity);
     } catch (error) {
-      setStatus(error.message || "Could not calculate shipping.", "error");
+      setStatus(getMessage(error, "Could not calculate shipping."), "error");
     } finally {
       rateButton.disabled = false;
     }
@@ -144,15 +200,17 @@
           selectedRateId
         })
       });
-      const data = await response.json();
+      const data = await response.json().catch(function () {
+        return {};
+      });
 
       if (!response.ok) {
-        throw new Error(data.error || "Could not open Stripe Checkout.");
+        throw new Error(getMessage(data, "Could not open Stripe Checkout."));
       }
 
       window.location.href = data.url;
     } catch (error) {
-      setStatus(error.message || "Could not open Stripe Checkout.", "error");
+      setStatus(getMessage(error, "Could not open Stripe Checkout."), "error");
       checkoutButton.disabled = false;
     }
   });

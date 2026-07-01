@@ -14,6 +14,52 @@ function cleanString(value) {
   return String(value || "").trim();
 }
 
+function getErrorMessage(value, fallback) {
+  if (!value) {
+    return fallback;
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (value.message && value.message !== value) {
+    return getErrorMessage(value.message, fallback);
+  }
+
+  if (value.error && value.error !== value) {
+    return getErrorMessage(value.error, fallback);
+  }
+
+  if (Array.isArray(value.errors) && value.errors.length) {
+    return value.errors.map((item) => getErrorMessage(item, "")).filter(Boolean).join(" ");
+  }
+
+  if (Array.isArray(value) && value.length) {
+    return value.map((item) => getErrorMessage(item, "")).filter(Boolean).join(" ");
+  }
+
+  if (typeof value === "object") {
+    const parts = Object.entries(value).map(([key, item]) => {
+      const message = getErrorMessage(item, "");
+      return message ? `${key}: ${message}` : "";
+    }).filter(Boolean);
+
+    if (parts.length) {
+      return parts.join(" ");
+    }
+
+    try {
+      const json = JSON.stringify(value);
+      return json && json !== "{}" ? json : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  return fallback;
+}
+
 function clampQuantity(value) {
   const quantity = Number(value || 1);
   if (!Number.isFinite(quantity)) {
@@ -165,7 +211,7 @@ async function requestRates(payload, env) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const message = data.message || data.error || "Easyship could not return rates for that address.";
+    const message = getErrorMessage(data, "Easyship could not return rates for that address.");
     throw new Error(message);
   }
 
@@ -179,7 +225,7 @@ export async function onRequestPost({ request, env }) {
     const rates = await requestRates(payload, env);
     return sendJson({ rates });
   } catch (error) {
-    return sendJson({ error: error.message || "Could not calculate shipping." }, 400);
+    return sendJson({ error: getErrorMessage(error, "Could not calculate shipping.") }, 400);
   }
 }
 

@@ -60,6 +60,52 @@ function cleanString(value) {
   return String(value || "").trim();
 }
 
+function getErrorMessage(value, fallback) {
+  if (!value) {
+    return fallback;
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (value.message && value.message !== value) {
+    return getErrorMessage(value.message, fallback);
+  }
+
+  if (value.error && value.error !== value) {
+    return getErrorMessage(value.error, fallback);
+  }
+
+  if (Array.isArray(value.errors) && value.errors.length) {
+    return value.errors.map((item) => getErrorMessage(item, "")).filter(Boolean).join(" ");
+  }
+
+  if (Array.isArray(value) && value.length) {
+    return value.map((item) => getErrorMessage(item, "")).filter(Boolean).join(" ");
+  }
+
+  if (typeof value === "object") {
+    const parts = Object.entries(value).map(([key, item]) => {
+      const message = getErrorMessage(item, "");
+      return message ? `${key}: ${message}` : "";
+    }).filter(Boolean);
+
+    if (parts.length) {
+      return parts.join(" ");
+    }
+
+    try {
+      const json = JSON.stringify(value);
+      return json && json !== "{}" ? json : fallback;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  return fallback;
+}
+
 function getParcelProfile(quantity) {
   if (quantity === 1) {
     return { length: 15.2, width: 15.2, height: 10.2, weight: 0.5 };
@@ -156,7 +202,7 @@ async function testCountry(country, quantity, incoterms, env) {
       country,
       ok: false,
       rateCount: 0,
-      error: data.message || data.error || `Easyship returned ${response.status}`
+      error: getErrorMessage(data, `Easyship returned ${response.status}`)
     };
   }
 
@@ -223,7 +269,7 @@ export async function onRequestPost({ request, env }) {
       results
     });
   } catch (error) {
-    return sendJson({ error: error.message || "Could not run country shipping test." }, 400);
+    return sendJson({ error: getErrorMessage(error, "Could not run country shipping test.") }, 400);
   }
 }
 
