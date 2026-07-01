@@ -63,5 +63,14 @@ Set these environment variables in your host:
 - `STRIPE_SECRET_KEY`
 - `SITE_URL`
 - `SHIPPING_HANDLING_CENTS`
+- `SHIPPING_TEST_TOKEN`
 
 Use `.env.example` as the template. Do not commit real API keys.
+
+## Country shipping test
+
+After Cloudflare env vars are configured, open:
+
+`/shipping-test`
+
+The diagnostic requires `SHIPPING_TEST_TOKEN`. It runs live Easyship quote checks in batches of 25 countries and reports pass/fail, rate count, cheapest rate, and courier. A failed country is not automatically unsupported; it may need a better sample address, a DDU/DDP change, or lithium-battery carrier review.

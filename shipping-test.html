@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping Test | Essentia</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="assets/essentia-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html" aria-label="Essentia home">
+          <img src="assets/essentia-mark.svg" alt="">
+          <span>Essentia</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <div class="page-hero-inner">
+          <div>
+            <p class="eyebrow">Private diagnostic</p>
+            <h1>Country shipping rate test.</h1>
+            <p class="hero-subtitle">Run Easyship rate checks by country code using Essentia's pre-production box profile. This page is not linked publicly and the endpoint requires a test token.</p>
+          </div>
+          <div class="hero-stat">
+            <strong>25</strong>
+            <span>Maximum country checks per API batch to avoid timeouts and surprise Easyship usage.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-inner reserve-layout">
+          <aside class="reserve-card">
+            <p class="section-kicker">Test setup</p>
+            <h2>Run a batch.</h2>
+            <form class="form-grid" data-shipping-test-form>
+              <label class="field">
+                <span>Shipping test token</span>
+                <input type="password" data-test-token autocomplete="off" required>
+              </label>
+              <div class="form-row">
+                <label class="field">
+                  <span>Quantity</span>
+                  <input name="quantity" type="number" min="1" max="4" value="1">
+                </label>
+                <label class="field">
+                  <span>Duties/taxes mode</span>
+                  <select name="incoterms">
+                    <option value="DDU">DDU</option>
+                    <option value="DDP">DDP</option>
+                  </select>
+                </label>
+              </div>
+              <label class="field">
+                <span>Country codes</span>
+                <textarea data-test-countries rows="8" spellcheck="false"></textarea>
+              </label>
+              <div class="button-row">
+                <button class="button secondary" type="button" data-priority-countries>Priority list</button>
+                <button class="button secondary" type="button" data-all-countries>All ISO list</button>
+              </div>
+              <button class="button primary" type="submit">Run shipping test</button>
+            </form>
+            <div class="checkout-status" data-test-status role="status"></div>
+            <p class="note">A fail can mean no carrier lane, lithium battery restriction, invalid sample address, DDP not supported, or missing Easyship configuration. Confirm failures manually before blocking a country.</p>
+          </aside>
+
+          <div class="stack">
+            <article class="feature-card">
+              <h3>Package profile</h3>
+              <p>One unit tests as a 6 x 6 x 4 in box at 1.1 lb, expressed to Easyship as 15.2 x 15.2 x 10.2 cm and 0.50 kg.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Required Cloudflare env vars</h3>
+              <p>Set `EASYSHIP_API_TOKEN`, all `EASYSHIP_ORIGIN_*` fields, and `SHIPPING_TEST_TOKEN`. The Stripe key is not required for this diagnostic.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt">
+        <div class="section-inner">
+          <div class="section-header">
+            <p class="section-kicker">Results</p>
+            <h2>Country rate matrix</h2>
+          </div>
+          <div class="test-results" data-test-results></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="shipping-test.js"></script>
+  </body>
+</html>
