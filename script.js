@@ -2,7 +2,7 @@
   const funding = {
     price: 169,
     msrp: 279,
-    baseUnits: 357,
+    baseUnits: 0,
     targetUnits: 1100,
     targetRevenue: 185900
   };
@@ -69,20 +69,10 @@
     }).format(value);
   };
 
-  const getExtraUnits = function () {
-    const stored = Number(window.localStorage.getItem("essentiaReservedUnits") || 0);
-    return Number.isFinite(stored) && stored > 0 ? stored : 0;
-  };
-
   const updateFunding = function () {
-    const extraUnits = getExtraUnits();
-    const units = funding.baseUnits + extraUnits;
-    const revenue = Math.min(units * funding.price, funding.targetRevenue);
-    const percent = Math.min(100, Math.round((revenue / funding.targetRevenue) * 100));
+    const units = funding.baseUnits;
+    const percent = Math.min(100, Math.round((units / funding.targetUnits) * 100));
 
-    document.querySelectorAll("[data-funded-amount]").forEach(function (node) {
-      node.textContent = formatMoney(revenue);
-    });
     document.querySelectorAll("[data-target-amount]").forEach(function (node) {
       node.textContent = formatMoney(funding.targetRevenue);
     });
@@ -177,30 +167,7 @@
     }
   };
 
-  const initPreorder = function () {
-    const form = document.querySelector("[data-preorder-form]");
-    if (!form) {
-      return;
-    }
-
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
-      const quantityInput = form.querySelector("[name='quantity']");
-      const quantity = Math.max(1, Number(quantityInput.value || 1));
-      const nextUnits = getExtraUnits() + quantity;
-      window.localStorage.setItem("essentiaReservedUnits", String(nextUnits));
-      updateFunding();
-
-      const confirmation = document.querySelector("[data-confirmation]");
-      if (confirmation) {
-        confirmation.textContent = "Founder reservation noted for " + quantity + " unit" + (quantity > 1 ? "s" : "") + ". The meter has been updated on this device.";
-        confirmation.classList.add("is-visible");
-      }
-    });
-  };
-
   initNavigation();
   initPresets();
-  initPreorder();
   updateFunding();
 })();
