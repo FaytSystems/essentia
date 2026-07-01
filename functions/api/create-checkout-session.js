@@ -248,6 +248,7 @@ async function requestRates(payload, env) {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${env.EASYSHIP_API_TOKEN}`,
+      "Accept": "application/json",
       "Content-Type": "application/json"
     },
     body: JSON.stringify(buildEasyshipBody(payload, env))

@@ -4,7 +4,7 @@
   "private": true,
   "description": "Essentia static site with Easyship smart shipping and Stripe Checkout endpoints.",
   "scripts": {
-    "check": "node --check functions/api/easyship-rates.js && node --check functions/api/create-checkout-session.js && node --check functions/api/test-shipping-countries.js && node --check smart-checkout.js && node --check shipping-test.js",
+    "check": "node --check functions/api/easyship-rates.js && node --check functions/api/create-checkout-session.js && node --check functions/api/test-shipping-countries.js && node --check functions/api/support-message.js && node --check smart-checkout.js && node --check shipping-test.js && node --check support.js",
     "dev": "vercel dev"
   },
   "engines": {

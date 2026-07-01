@@ -125,10 +125,13 @@
       });
     }
 
-    const page = window.location.pathname.split("/").pop() || "index.html";
+    const normalizePage = function (value) {
+      return String(value || "index.html").replace(/\.html$/i, "") || "index";
+    };
+    const page = normalizePage(window.location.pathname.split("/").pop());
     document.querySelectorAll(".site-nav a").forEach(function (link) {
-      const href = link.getAttribute("href");
-      if (href === page || (page === "" && href === "index.html")) {
+      const href = normalizePage(link.getAttribute("href"));
+      if (href === page) {
         link.classList.add("is-current");
       }
     });

@@ -8,7 +8,10 @@ Essentia is a static launch site for a smart humidity-regulating mason jar cap.
 - `product.html` - product details, control logic, compatibility, and battery-life estimates.
 - `presets.html` - interactive color touch LCD preset demo with food and herb RH targets.
 - `about.html` - brand story, launch plan, and first-run cost assumptions.
-- `preorder.html` - founder pricing, funding math, and a reservation form demo.
+- `preorder.html` - founder pricing, funding math, smart checkout, and preorder policy.
+- `support.html` - support contact page and optional Cloudflare Function-backed support form.
+- `privacy.html` - privacy policy for checkout, shipping, support, Stripe, Easyship, and Cloudflare.
+- `terms.html` - terms of service, founder preorder terms, and no-return-unless-defective policy.
 
 ## Pricing assumptions
 
@@ -35,9 +38,9 @@ The funding target is modeled as:
 
 ## Notes
 
-The pre-order form is front-end only. It updates the meter in local storage for demo purposes and should be connected to a real checkout system before launch.
+The funding meter starts at zero and should be connected to real paid preorder counts before a production launch.
 
-Battery-life and cost figures are pre-production estimates and should be updated after prototype testing and vendor quotes.
+Battery-life and cost figures are pre-production estimates and should be updated after prototype testing, vendor quotes, and carrier validation.
 
 ## Easyship + Stripe smart checkout
 
@@ -64,8 +67,13 @@ Set these environment variables in your host:
 - `SITE_URL`
 - `SHIPPING_HANDLING_CENTS`
 - `SHIPPING_TEST_TOKEN`
+- `SUPPORT_EMAIL`
+- `RESEND_API_KEY`
+- `SUPPORT_FROM_EMAIL`
 
 Use `.env.example` as the template. Do not commit real API keys.
+
+The support form uses `/api/support-message`. Without `RESEND_API_KEY`, the page still shows and opens the direct support email link: `faytsignup@gmail.com`.
 
 ## Country shipping test
 

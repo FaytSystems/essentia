@@ -228,6 +228,7 @@ async function testCountry(country, quantity, incoterms, env) {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${env.EASYSHIP_API_TOKEN}`,
+      "Accept": "application/json",
       "Content-Type": "application/json"
     },
     body: JSON.stringify(buildEasyshipBody(country, quantity, incoterms, env))

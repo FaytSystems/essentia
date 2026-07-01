@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Support | Essentia</title>
+    <meta name="description" content="Contact Essentia support for founder pre-orders, shipping questions, and defective-product claims.">
+    <link rel="icon" href="assets/essentia-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html" aria-label="Essentia home">
+          <img src="assets/essentia-mark.svg" alt="">
+          <span>Essentia</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav" data-menu-toggle>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="site-nav" id="site-nav" data-site-nav>
+          <a href="index.html">Home</a>
+          <a href="product.html">Product</a>
+          <a href="presets.html">Presets</a>
+          <a href="about.html">About</a>
+          <a href="support.html">Support</a>
+          <a class="nav-cta" href="preorder.html">Pre-order</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <div class="page-hero-inner">
+          <div>
+            <p class="eyebrow">Support</p>
+            <h1>We can help with pre-orders, shipping, and defective-product claims.</h1>
+            <p class="hero-subtitle">For the fastest support, include your order number, delivery country, and a short description of the issue.</p>
+          </div>
+          <div class="hero-stat">
+            <strong>Email</strong>
+            <span><a href="mailto:faytsignup@gmail.com">faytsignup@gmail.com</a></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-inner reserve-layout">
+          <aside class="reserve-card">
+            <p class="section-kicker">Contact form</p>
+            <h2>Send a support request.</h2>
+            <form class="form-grid" data-support-form>
+              <label class="field">
+                <span>Name</span>
+                <input name="name" type="text" autocomplete="name" required>
+              </label>
+              <label class="field">
+                <span>Email</span>
+                <input name="email" type="email" autocomplete="email" required>
+              </label>
+              <label class="field">
+                <span>Order number</span>
+                <input name="orderNumber" type="text" autocomplete="off" placeholder="Optional">
+              </label>
+              <label class="field">
+                <span>Topic</span>
+                <select name="subject">
+                  <option value="Founder pre-order">Founder pre-order</option>
+                  <option value="Shipping quote">Shipping quote</option>
+                  <option value="Defective item">Defective item</option>
+                  <option value="General support">General support</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Message</span>
+                <textarea name="message" rows="7" maxlength="4000" required></textarea>
+              </label>
+              <button class="button primary" type="submit" data-support-submit>Send support request</button>
+            </form>
+            <div class="checkout-status" data-support-status role="status"></div>
+            <p class="note">If the form is unavailable, email <a href="mailto:faytsignup@gmail.com">faytsignup@gmail.com</a> directly.</p>
+          </aside>
+
+          <div class="stack">
+            <article class="feature-card">
+              <h3>Defective item claims</h3>
+              <p>Include your order number, photos of the issue, and the delivery date. Approved defective claims may be repaired, replaced, or refunded.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Shipping questions</h3>
+              <p>Include the destination country, postal code, selected duties/taxes option, and any carrier quote shown at checkout.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Policy links</h3>
+              <p>Review the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a> before placing a founder pre-order.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <a class="brand" href="index.html" aria-label="Essentia home">
+          <img src="assets/essentia-mark.svg" alt="">
+          <span>Essentia</span>
+        </a>
+        <div class="footer-links">
+          <a href="product.html">Product</a>
+          <a href="presets.html">Presets</a>
+          <a href="about.html">About</a>
+          <a href="preorder.html">Pre-order</a>
+          <a href="support.html">Support</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="support.js"></script>
+  </body>
+</html>
