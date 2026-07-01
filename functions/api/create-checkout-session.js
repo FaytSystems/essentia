@@ -89,6 +89,14 @@ function requireOriginValue(value, name) {
   return cleaned;
 }
 
+function getOriginCountry(env) {
+  const country = cleanString(env.EASYSHIP_ORIGIN_COUNTRY || "US").toUpperCase();
+  if (!/^[A-Z]{2}$/.test(country)) {
+    throw new Error("Easyship origin country must be a 2-letter country code like US.");
+  }
+  return country;
+}
+
 function getOriginAddress(env) {
   return {
     line_1: requireOriginValue(env.EASYSHIP_ORIGIN_LINE1, "street address"),
@@ -96,8 +104,20 @@ function getOriginAddress(env) {
     city: requireOriginValue(env.EASYSHIP_ORIGIN_CITY, "city"),
     state: requireOriginValue(env.EASYSHIP_ORIGIN_STATE, "state"),
     postal_code: requireOriginValue(env.EASYSHIP_ORIGIN_POSTAL_CODE, "postal code"),
-    country_alpha2: cleanString(env.EASYSHIP_ORIGIN_COUNTRY).toUpperCase() || "US"
+    country_alpha2: getOriginCountry(env)
   };
+}
+
+function getEasyshipRatesUrl(env) {
+  let baseUrl = cleanString(env.EASYSHIP_API_BASE) || EASYSHIP_API_BASE;
+  baseUrl = baseUrl.replace(/\/+$/, "").replace(/\/rates$/i, "");
+
+  if (!/\/2024-09$/i.test(baseUrl)) {
+    baseUrl = baseUrl.replace(/\/20\d{2}-\d{2}$/i, "");
+    baseUrl += "/2024-09";
+  }
+
+  return `${baseUrl}/rates`;
 }
 
 function validatePayload(payload) {
@@ -180,8 +200,10 @@ function buildEasyshipBody(payload, env) {
         items: [
           {
             description: "Smart humidity regulating jar cap",
-            category: "electronics",
+            hs_code: "903289",
             sku: "ESSENTIA-CAP-001",
+            contains_battery_pi967: true,
+            contains_liquids: false,
             quantity: payload.quantity,
             actual_weight: 0.38,
             declared_currency: "USD",
@@ -222,7 +244,7 @@ async function requestRates(payload, env) {
     throw new Error("Easyship API token is not configured.");
   }
 
-  const response = await fetch(`${env.EASYSHIP_API_BASE || EASYSHIP_API_BASE}/rates`, {
+  const response = await fetch(getEasyshipRatesUrl(env), {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${env.EASYSHIP_API_TOKEN}`,
