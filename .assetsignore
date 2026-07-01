@@ -1,0 +1,12 @@
+.git
+.env
+.env.*
+.env.example
+.gitignore
+.assetsignore
+README.md
+package.json
+wrangler.toml
+.wrangler
+api
+*.log

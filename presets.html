@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Presets | Essentia</title>
+    <meta name="description" content="Explore Essentia humidity presets for herbs, rice, cereal, flour, sugar, coffee, tea, and legal flower.">
+    <link rel="icon" href="assets/essentia-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html" aria-label="Essentia home">
+          <img src="assets/essentia-mark.svg" alt="">
+          <span>Essentia</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav" data-menu-toggle>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="site-nav" id="site-nav" data-site-nav>
+          <a href="index.html">Home</a>
+          <a href="product.html">Product</a>
+          <a href="presets.html">Presets</a>
+          <a href="about.html">About</a>
+          <a class="nav-cta" href="preorder.html">Pre-order</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <div class="page-hero-inner">
+          <div>
+            <p class="eyebrow">Color touch LCD preset demo</p>
+            <h1>Tap a food profile. Essentia shows the target RH.</h1>
+            <p class="hero-subtitle">Each preset is a practical starting point, not a hard rule. Manual override lets careful users tune the jar to their ingredient, climate, and preference.</p>
+          </div>
+          <div class="hero-stat">
+            <strong>8</strong>
+            <span>Launch profiles planned, plus manual target control.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-inner demo-wrap">
+          <div class="device-demo">
+            <div class="smart-cap">
+              <div class="lcd-screen" aria-live="polite">
+                <div class="lcd-rh">
+                  <strong data-screen-rh>55</strong>
+                  <span>% RH</span>
+                </div>
+                <div class="lcd-icon" data-screen-icon></div>
+                <div class="lcd-label" data-screen-label>Culinary herbs</div>
+                <p class="lcd-status" data-screen-status>Holds aroma-focused storage for dried herbs while avoiding damp outside air.</p>
+              </div>
+            </div>
+            <div class="manual-control">
+              <label for="manual-rh">
+                <span>Manual override</span>
+                <strong data-manual-value>55%</strong>
+              </label>
+              <input id="manual-rh" type="range" min="25" max="85" value="55" data-manual-rh>
+            </div>
+          </div>
+
+          <div>
+            <div class="section-header">
+              <p class="section-kicker">Preset library</p>
+              <h2>Cartoony, glanceable profiles for real pantry decisions.</h2>
+              <p class="lead">The color touch LCD concept is meant to be friendly: a simple picture, a clear percentage, and a status line that tells you whether Essentia is guarding the jar.</p>
+            </div>
+            <div class="preset-grid">
+              <button class="preset-card" type="button" data-preset="herbs">
+                <svg class="preset-art" viewBox="0 0 120 90" aria-hidden="true"><path d="M58 76C56 55 64 34 80 18" fill="none" stroke="#5f8a6d" stroke-width="6" stroke-linecap="round"/><path d="M68 45c16-8 26-7 33-1-8 11-21 12-33 1Z" fill="#76a87d"/><path d="M55 57c-17-3-26 2-31 10 11 7 23 4 31-10Z" fill="#86b98c"/><path d="M74 31c-8-14-18-19-28-18-1 13 9 22 28 18Z" fill="#9bc575"/></svg>
+                <strong>Culinary herbs</strong>
+                <span>Dried herbs and homegrown aromatics.</span>
+                <b>55% RH</b>
+              </button>
+              <button class="preset-card" type="button" data-preset="flower">
+                <svg class="preset-art" viewBox="0 0 120 90" aria-hidden="true"><circle cx="60" cy="45" r="10" fill="#dba852"/><path d="M60 9c9 15 9 28 0 36-9-8-9-21 0-36ZM60 81c-9-15-9-28 0-36 9 8 9 21 0 36ZM24 24c17 4 28 11 31 23-12 3-24-5-31-23ZM96 66c-17-4-28-11-31-23 12-3 24 5 31 23ZM96 24c-7 18-19 26-31 23 3-12 14-19 31-23ZM24 66c7-18 19-26 31-23-3 12-14 19-31 23Z" fill="#5f8a6d"/></svg>
+                <strong>Legal flower</strong>
+                <span>Connoisseur storage where permitted.</span>
+                <b>62% RH</b>
+              </button>
+              <button class="preset-card" type="button" data-preset="rice">
+                <svg class="preset-art" viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="34" cy="53" rx="10" ry="21" transform="rotate(68 34 53)" fill="#f4ecd4"/><ellipse cx="56" cy="43" rx="10" ry="22" transform="rotate(73 56 43)" fill="#fff7df"/><ellipse cx="77" cy="56" rx="9" ry="20" transform="rotate(67 77 56)" fill="#efe2be"/><ellipse cx="64" cy="65" rx="9" ry="19" transform="rotate(83 64 65)" fill="#f9f1d8"/></svg>
+                <strong>Rice</strong>
+                <span>Dry grain storage for bulk pantry jars.</span>
+                <b>35% RH</b>
+              </button>
+              <button class="preset-card" type="button" data-preset="cereal">
+                <svg class="preset-art" viewBox="0 0 120 90" aria-hidden="true"><path d="M24 44h72l-10 27H34L24 44Z" fill="#d6e4ee"/><ellipse cx="60" cy="44" rx="36" ry="13" fill="#ffffff"/><circle cx="43" cy="42" r="8" fill="#dba852"/><circle cx="62" cy="39" r="8" fill="#c77944"/><circle cx="76" cy="45" r="8" fill="#dba852"/><circle cx="55" cy="50" r="8" fill="#b06a38"/></svg>
+                <strong>Cereal</strong>
+                <span>Crunch-preserving breakfast storage.</span>
+                <b>35% RH</b>
+              </button>
+              <button class="preset-card" type="button" data-preset="flour">
+                <svg class="preset-art" viewBox="0 0 120 90" aria-hidden="true"><path d="M32 64c7-20 49-20 56 0 2 8-8 14-28 14s-30-6-28-14Z" fill="#f5efe5"/><path d="M71 42l32-15 4 8-32 15Z" fill="#caa47b"/><path d="M43 31h34l8 31H35l8-31Z" fill="#fffaf0"/><path d="M42 31c7-10 29-10 36 0" fill="none" stroke="#d9c9ab" stroke-width="5" stroke-linecap="round"/></svg>
+                <strong>Flour</strong>
+                <span>Dry baking-staple storage.</span>
+                <b>40% RH</b>
+              </button>
+              <button class="preset-card" type="button" data-preset="sugar">
+                <svg class="preset-art" viewBox="0 0 120 90" aria-hidden="true"><rect x="28" y="47" width="24" height="24" rx="4" fill="#f8fbff"/><rect x="48" y="30" width="24" height="24" rx="4" fill="#eef6fb"/><rect x="69" y="47" width="24" height="24" rx="4" fill="#ffffff"/><path d="M32 48l16 22M52 31l17 22M73 48l17 22" stroke="#d7e5ee" stroke-width="3"/></svg>
+                <strong>Sugar</strong>
+                <span>Lower RH to help limit clumping.</span>
+                <b>30% RH</b>
+              </button>
+              <button class="preset-card" type="button" data-preset="coffee">
+                <svg class="preset-art" viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="45" cy="49" rx="17" ry="27" transform="rotate(28 45 49)" fill="#6f4532"/><path d="M42 27c8 13 7 29-4 44" fill="none" stroke="#b87752" stroke-width="4" stroke-linecap="round"/><ellipse cx="75" cy="45" rx="17" ry="27" transform="rotate(-28 75 45)" fill="#8a563b"/><path d="M79 23c-8 13-7 30 4 44" fill="none" stroke="#c7865e" stroke-width="4" stroke-linecap="round"/></svg>
+                <strong>Coffee</strong>
+                <span>Moderate target for whole beans.</span>
+                <b>50% RH</b>
+              </button>
+              <button class="preset-card" type="button" data-preset="tea">
+                <svg class="preset-art" viewBox="0 0 120 90" aria-hidden="true"><path d="M22 60c26-35 58-42 77-25-17 29-49 38-77 25Z" fill="#7cae75"/><path d="M30 58c24-11 42-17 64-22" fill="none" stroke="#315744" stroke-width="5" stroke-linecap="round"/><path d="M48 50c-3-12-1-22 6-31 13 12 15 24 4 35" fill="#9bc575"/></svg>
+                <strong>Tea</strong>
+                <span>Dried leaves and delicate aromatics.</span>
+                <b>45% RH</b>
+              </button>
+            </div>
+            <p class="note">Recommended RH targets vary by ingredient, processing, and local conditions. These values are launch presets for the demo and should be validated with food-safety guidance before production copy is finalized.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt">
+        <div class="section-inner split">
+          <div>
+            <p class="section-kicker">Manual override</p>
+            <h2>Set the humidity you want, then let Essentia decide when the room can help.</h2>
+            <p>Manual mode is for careful users: growers, cooks, bulk buyers, and collectors who already know the range they want. Essentia does not force the jar toward unsafe conditions; it only manages exchange when the outside environment can move the contents toward the target.</p>
+          </div>
+          <div class="stack">
+            <article class="feature-card">
+              <h3>Example: pantry protection</h3>
+              <p>Set sugar to a low target. If the kitchen gets humid during cooking, Essentia stays closed instead of letting clump-forming moisture into the jar.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Example: herbs and flower</h3>
+              <p>Set a moderate target for aroma and feel. If room air would over-humidify the jar, Essentia waits for better conditions.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <a class="brand" href="index.html" aria-label="Essentia home">
+          <img src="assets/essentia-mark.svg" alt="">
+          <span>Essentia</span>
+        </a>
+        <div class="footer-links">
+          <a href="product.html">Product</a>
+          <a href="presets.html">Presets</a>
+          <a href="about.html">About</a>
+          <a href="preorder.html">Pre-order</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

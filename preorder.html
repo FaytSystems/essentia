@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pre-order | Essentia</title>
+    <meta name="description" content="Reserve an Essentia founder unit at reduced early pricing and help fund the first production run.">
+    <link rel="icon" href="assets/essentia-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html" aria-label="Essentia home">
+          <img src="assets/essentia-mark.svg" alt="">
+          <span>Essentia</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav" data-menu-toggle>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="site-nav" id="site-nav" data-site-nav>
+          <a href="index.html">Home</a>
+          <a href="product.html">Product</a>
+          <a href="presets.html">Presets</a>
+          <a href="about.html">About</a>
+          <a class="nav-cta" href="preorder.html">Pre-order</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <div class="page-hero-inner">
+          <div>
+            <p class="eyebrow">Founder reservations</p>
+            <h1>Reserve Essentia below MSRP before the first run is made.</h1>
+            <p class="hero-subtitle">Founder customers help fund premium tooling, manufacturing, electronics, and packaging up front. In return, the first units are priced at <span data-founder-price>$169</span> before the planned <span data-msrp>$279</span> MSRP.</p>
+          </div>
+          <div class="hero-stat">
+            <strong data-founder-price>$169</strong>
+            <span>Founder price for the first 1,100 units.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-inner reserve-layout">
+          <div class="stack">
+            <div class="funding-panel">
+              <div>
+                <div class="meter-heading">
+                  <h2>First-run meter</h2>
+                  <span><span data-funded-percent>0%</span> funded</span>
+                </div>
+                <div class="meter-track" aria-hidden="true">
+                  <div class="meter-fill" data-meter-fill></div>
+                </div>
+                <div class="meter-meta">
+                  <span><strong data-funded-amount>$0</strong> reserved</span>
+                  <span><strong data-funded-units>0</strong> of <strong data-target-units>1,100</strong> units</span>
+                </div>
+              </div>
+              <div class="price-lock">
+                <span class="label">Threshold</span>
+                <strong class="price" data-target-amount>$185,900</strong>
+                <p>Target covers premium COGS, tooling, setup, QA, freight reserve, and $5,000 planned profit.</p>
+              </div>
+            </div>
+
+            <div class="feature-grid">
+              <article class="feature-card">
+                <h3>Founder price</h3>
+                <p><strong data-founder-price>$169</strong> per cap in the founding batch, compared with planned <span data-msrp>$279</span> MSRP.</p>
+              </article>
+              <article class="feature-card">
+                <h3>Estimated COGS</h3>
+                <p>$112 landed unit cost for premium PCB assembly, color touch LCD, protected battery, sensors, internal actuator package, cap shell, gasket, assembly, packaging, and QA.</p>
+              </article>
+              <article class="feature-card">
+                <h3>First-run quantity</h3>
+                <p>1,100 founding units gives the run enough scale to order parts and packaging at workable pricing.</p>
+              </article>
+              <article class="feature-card">
+                <h3>Launch reserve</h3>
+                <p>The target includes a $5,000 profit reserve so the project has room to support early customers.</p>
+              </article>
+            </div>
+          </div>
+
+          <aside class="reserve-card" id="reserve">
+            <p class="section-kicker">Smart checkout</p>
+            <h2>Get shipping first, then pay the exact total.</h2>
+            <p class="muted">Enter the delivery address, choose an Easyship quote, then continue to Stripe Checkout with product and shipping already priced.</p>
+            <form class="form-grid" data-smart-checkout-form>
+              <label class="field">
+                <span>Quantity</span>
+                <input name="quantity" type="number" min="1" max="4" value="1" required>
+              </label>
+              <label class="field">
+                <span>Name</span>
+                <input name="name" type="text" autocomplete="name" placeholder="Your name" required>
+              </label>
+              <label class="field">
+                <span>Email</span>
+                <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+              </label>
+              <label class="field">
+                <span>Address line 1</span>
+                <input name="line1" type="text" autocomplete="address-line1" placeholder="Street address" required>
+              </label>
+              <label class="field">
+                <span>Address line 2</span>
+                <input name="line2" type="text" autocomplete="address-line2" placeholder="Apartment, suite, unit">
+              </label>
+              <div class="form-row">
+                <label class="field">
+                  <span>City</span>
+                  <input name="city" type="text" autocomplete="address-level2" required>
+                </label>
+                <label class="field">
+                  <span>State / province</span>
+                  <input name="state" type="text" autocomplete="address-level1" placeholder="Required for US, CA, MX, AU">
+                </label>
+              </div>
+              <div class="form-row">
+                <label class="field">
+                  <span>Postal code</span>
+                  <input name="postalCode" type="text" autocomplete="postal-code" required>
+                </label>
+                <label class="field">
+                  <span>Country code</span>
+                  <input name="country" type="text" autocomplete="country" list="country-codes" maxlength="2" placeholder="US" required>
+                  <datalist id="country-codes">
+                    <option value="US">United States</option>
+                    <option value="CA">Canada</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="AU">Australia</option>
+                    <option value="NZ">New Zealand</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="IT">Italy</option>
+                    <option value="ES">Spain</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="JP">Japan</option>
+                    <option value="MX">Mexico</option>
+                    <option value="BR">Brazil</option>
+                  </datalist>
+                </label>
+              </div>
+              <label class="field">
+                <span>Duties and taxes</span>
+                <select name="incoterms">
+                  <option value="DDU">DDU - customer pays import duties/taxes on delivery</option>
+                  <option value="DDP">DDP - include supported duties/taxes in shipping quote</option>
+                </select>
+              </label>
+              <button class="button primary" type="submit" data-rate-button>Calculate shipping</button>
+            </form>
+            <div class="checkout-status" data-shipping-status role="status"></div>
+            <div class="rate-options" data-rate-options></div>
+            <button class="button primary checkout-button" type="button" disabled data-checkout-button>Continue to Stripe Checkout</button>
+            <p class="note">Quotes use the pre-production package profile: 6 x 6 x 4 in outer box and 1.1 lb packed weight for one unit. Lithium battery shipping rules still need final carrier validation before global launch.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section alt">
+        <div class="section-inner">
+          <div class="section-header">
+            <p class="section-kicker">Where the threshold goes</p>
+            <h2>The funding target is not a vague goal.</h2>
+            <p class="lead">The founding meter is set to <span data-target-amount>$185,900</span>, which equals 1,100 founder units at <span data-founder-price>$169</span> each.</p>
+          </div>
+          <table class="spec-table">
+            <tbody>
+              <tr>
+                <th>Estimated unit COGS</th>
+                <td>$123,200 for 1,100 units at $112 each.</td>
+              </tr>
+              <tr>
+                <th>Tooling and setup</th>
+                <td>$45,700 for metal cap tooling, gasket tooling, premium PCB/test fixtures, package setup, and validation prep.</td>
+              </tr>
+              <tr>
+                <th>Freight and QA reserve</th>
+                <td>$12,000 reserved for inbound freight, inspections, replacements, and launch buffer.</td>
+              </tr>
+              <tr>
+                <th>Profit reserve</th>
+                <td>$5,000 planned profit reserve after estimated first-run obligations.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <a class="brand" href="index.html" aria-label="Essentia home">
+          <img src="assets/essentia-mark.svg" alt="">
+          <span>Essentia</span>
+        </a>
+        <div class="footer-links">
+          <a href="product.html">Product</a>
+          <a href="presets.html">Presets</a>
+          <a href="about.html">About</a>
+          <a href="preorder.html">Pre-order</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="smart-checkout.js"></script>
+  </body>
+</html>

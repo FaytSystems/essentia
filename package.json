@@ -1,0 +1,13 @@
+{
+  "name": "essentia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Essentia static site with Easyship smart shipping and Stripe Checkout endpoints.",
+  "scripts": {
+    "check": "node --check functions/api/easyship-rates.js && node --check functions/api/create-checkout-session.js && node --check smart-checkout.js",
+    "dev": "vercel dev"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
