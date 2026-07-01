@@ -1,5 +1,6 @@
 const EASYSHIP_API_BASE = "https://public-api.easyship.com/2024-09";
 const PRODUCT_PRICE_CENTS = 16900;
+const REQUIRED_STATE_COUNTRIES = new Set(["AU", "CA", "CN", "ID", "MX", "MY", "TH", "US", "VN"]);
 
 function sendJson(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
@@ -80,14 +81,22 @@ function getParcelProfile(quantity) {
   return { length: 25.4, width: 20.3, height: 15.2, weight: 1.7 };
 }
 
+function requireOriginValue(value, name) {
+  const cleaned = cleanString(value);
+  if (!cleaned) {
+    throw new Error(`Easyship origin ${name} is not configured.`);
+  }
+  return cleaned;
+}
+
 function getOriginAddress(env) {
   return {
-    line_1: env.EASYSHIP_ORIGIN_LINE1,
-    line_2: env.EASYSHIP_ORIGIN_LINE2 || undefined,
-    city: env.EASYSHIP_ORIGIN_CITY,
-    state: env.EASYSHIP_ORIGIN_STATE,
-    postal_code: env.EASYSHIP_ORIGIN_POSTAL_CODE,
-    country_alpha2: env.EASYSHIP_ORIGIN_COUNTRY || "US"
+    line_1: requireOriginValue(env.EASYSHIP_ORIGIN_LINE1, "street address"),
+    line_2: cleanString(env.EASYSHIP_ORIGIN_LINE2) || null,
+    city: requireOriginValue(env.EASYSHIP_ORIGIN_CITY, "city"),
+    state: requireOriginValue(env.EASYSHIP_ORIGIN_STATE, "state"),
+    postal_code: requireOriginValue(env.EASYSHIP_ORIGIN_POSTAL_CODE, "postal code"),
+    country_alpha2: cleanString(env.EASYSHIP_ORIGIN_COUNTRY).toUpperCase() || "US"
   };
 }
 
@@ -109,6 +118,10 @@ function validatePayload(payload) {
 
   if (!cleanString(address.line1) || !cleanString(address.city) || !cleanString(address.postalCode) || country.length !== 2) {
     throw new Error("Complete shipping address and 2-letter country code are required.");
+  }
+
+  if (REQUIRED_STATE_COUNTRIES.has(country) && !cleanString(address.state)) {
+    throw new Error("State/province is required for this destination country.");
   }
 
   if (!["DDU", "DDP"].includes(incoterms)) {
@@ -141,14 +154,21 @@ function buildEasyshipBody(payload, env) {
     origin_address: getOriginAddress(env),
     destination_address: {
       line_1: payload.address.line1,
-      line_2: payload.address.line2 || undefined,
+      line_2: payload.address.line2 || null,
       city: payload.address.city,
-      state: payload.address.state || undefined,
+      state: payload.address.state || null,
       postal_code: payload.address.postalCode,
       country_alpha2: payload.address.country
     },
     incoterms: payload.incoterms,
     calculate_tax_and_duties: true,
+    shipping_settings: {
+      units: {
+        weight: "kg",
+        dimensions: "cm"
+      },
+      output_currency: "USD"
+    },
     parcels: [
       {
         total_actual_weight: profile.weight,
@@ -178,14 +198,17 @@ function normalizeRates(rates, env) {
   const handlingCents = Number(env.SHIPPING_HANDLING_CENTS || 0);
 
   return (Array.isArray(rates) ? rates : []).map((rate) => {
+    const service = rate.courier_service || {};
+    const id = service.id || service.courier_id || rate.courier_id;
+    const courierName = service.name || service.umbrella_name || rate.courier_name || "Courier";
     const currency = String(rate.currency || "USD").toUpperCase();
     const baseChargeCents = Math.round(Number(rate.total_charge || 0) * 100);
     const totalChargeCents = baseChargeCents + (Number.isFinite(handlingCents) ? handlingCents : 0);
 
     return {
-      id: rate.courier_id,
-      courierName: rate.courier_name || "Courier",
-      serviceName: rate.description || rate.full_description || "Shipping",
+      id,
+      courierName,
+      serviceName: rate.description || rate.full_description || courierName,
       fullDescription: rate.full_description || "",
       incoterms: rate.incoterms || null,
       currency,

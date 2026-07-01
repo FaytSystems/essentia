@@ -1,6 +1,7 @@
 const EASYSHIP_API_BASE = "https://public-api.easyship.com/2024-09";
 const PRODUCT_PRICE_CENTS = 16900;
 const MAX_COUNTRIES_PER_RUN = 25;
+const REQUIRED_STATE_COUNTRIES = new Set(["AU", "CA", "CN", "ID", "MX", "MY", "TH", "US", "VN"]);
 
 const SAMPLE_ADDRESSES = {
   US: { line1: "1600 Pennsylvania Ave NW", city: "Washington", state: "DC", postalCode: "20500" },
@@ -29,11 +30,11 @@ const SAMPLE_ADDRESSES = {
   SG: { line1: "1 Parliament Place", city: "Singapore", state: "", postalCode: "178880" },
   HK: { line1: "1 Legislative Council Road", city: "Central", state: "", postalCode: "999077" },
   TW: { line1: "No. 1 Chongqing S Rd", city: "Taipei", state: "", postalCode: "100" },
-  MY: { line1: "Jalan Parlimen", city: "Kuala Lumpur", state: "", postalCode: "50680" },
-  TH: { line1: "1 Nakhon Pathom Road", city: "Bangkok", state: "", postalCode: "10300" },
+  MY: { line1: "Jalan Parlimen", city: "Kuala Lumpur", state: "Kuala Lumpur", postalCode: "50680" },
+  TH: { line1: "1 Nakhon Pathom Road", city: "Bangkok", state: "Bangkok", postalCode: "10300" },
   PH: { line1: "Padre Burgos Ave", city: "Manila", state: "", postalCode: "1000" },
-  ID: { line1: "Jl. Medan Merdeka Utara", city: "Jakarta", state: "", postalCode: "10110" },
-  VN: { line1: "2 Hung Vuong", city: "Hanoi", state: "", postalCode: "100000" },
+  ID: { line1: "Jl. Medan Merdeka Utara", city: "Jakarta", state: "DKI Jakarta", postalCode: "10110" },
+  VN: { line1: "2 Hung Vuong", city: "Hanoi", state: "Hanoi", postalCode: "100000" },
   IN: { line1: "Sansad Marg", city: "New Delhi", state: "DL", postalCode: "110001" },
   AE: { line1: "Sheikh Zayed Road", city: "Dubai", state: "Dubai", postalCode: "00000" },
   SA: { line1: "King Fahd Road", city: "Riyadh", state: "", postalCode: "12271" },
@@ -118,14 +119,22 @@ function getParcelProfile(quantity) {
   return { length: 25.4, width: 20.3, height: 15.2, weight: 1.7 };
 }
 
+function requireOriginValue(value, name) {
+  const cleaned = cleanString(value);
+  if (!cleaned) {
+    throw new Error(`Easyship origin ${name} is not configured.`);
+  }
+  return cleaned;
+}
+
 function getOriginAddress(env) {
   return {
-    line_1: env.EASYSHIP_ORIGIN_LINE1,
-    line_2: env.EASYSHIP_ORIGIN_LINE2 || undefined,
-    city: env.EASYSHIP_ORIGIN_CITY,
-    state: env.EASYSHIP_ORIGIN_STATE,
-    postal_code: env.EASYSHIP_ORIGIN_POSTAL_CODE,
-    country_alpha2: env.EASYSHIP_ORIGIN_COUNTRY || "US"
+    line_1: requireOriginValue(env.EASYSHIP_ORIGIN_LINE1, "street address"),
+    line_2: cleanString(env.EASYSHIP_ORIGIN_LINE2) || null,
+    city: requireOriginValue(env.EASYSHIP_ORIGIN_CITY, "city"),
+    state: requireOriginValue(env.EASYSHIP_ORIGIN_STATE, "state"),
+    postal_code: requireOriginValue(env.EASYSHIP_ORIGIN_POSTAL_CODE, "postal code"),
+    country_alpha2: cleanString(env.EASYSHIP_ORIGIN_COUNTRY).toUpperCase() || "US"
   };
 }
 
@@ -140,7 +149,7 @@ function getDestinationAddress(country) {
   return {
     line_1: sample.line1,
     city: sample.city,
-    state: sample.state || undefined,
+    state: sample.state || null,
     postal_code: sample.postalCode,
     country_alpha2: country
   };
@@ -154,6 +163,13 @@ function buildEasyshipBody(country, quantity, incoterms, env) {
     destination_address: getDestinationAddress(country),
     incoterms,
     calculate_tax_and_duties: true,
+    shipping_settings: {
+      units: {
+        weight: "kg",
+        dimensions: "cm"
+      },
+      output_currency: "USD"
+    },
     parcels: [
       {
         total_actual_weight: profile.weight,
@@ -208,12 +224,17 @@ async function testCountry(country, quantity, incoterms, env) {
 
   const rates = Array.isArray(data.rates) ? data.rates : [];
   const cheapest = rates
-    .map((rate) => ({
-      courier: rate.courier_name || "Courier",
-      service: rate.description || rate.full_description || "Shipping",
-      currency: String(rate.currency || "USD").toUpperCase(),
-      cents: Math.round(Number(rate.total_charge || 0) * 100)
-    }))
+    .map((rate) => {
+      const service = rate.courier_service || {};
+      const courier = service.name || service.umbrella_name || rate.courier_name || "Courier";
+
+      return {
+        courier,
+        service: rate.description || rate.full_description || courier,
+        currency: String(rate.currency || "USD").toUpperCase(),
+        cents: Math.round(Number(rate.total_charge || 0) * 100)
+      };
+    })
     .filter((rate) => rate.cents > 0)
     .sort((a, b) => a.cents - b.cents)[0];
 
@@ -250,6 +271,11 @@ export async function onRequestPost({ request, env }) {
 
     if (!countries.length) {
       return sendJson({ error: "Provide 2-letter country codes to test." }, 400);
+    }
+
+    const missingStateCountries = countries.filter((country) => REQUIRED_STATE_COUNTRIES.has(country) && !SAMPLE_ADDRESSES[country]?.state);
+    if (missingStateCountries.length) {
+      return sendJson({ error: `Missing state samples for ${missingStateCountries.join(", ")}.` }, 400);
     }
 
     if (!["DDU", "DDP"].includes(incoterms)) {
