@@ -1,3 +1,7 @@
 name = "essentia"
 compatibility_date = "2026-07-01"
 pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "ESSENTIA_FUNDING"
+id = "d685d0e649e94a058b6b61ac792a7f51"

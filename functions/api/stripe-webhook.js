@@ -5,6 +5,7 @@ const HANDLED_EVENTS = new Set([
   "checkout.session.async_payment_succeeded",
   "checkout.session.async_payment_failed"
 ]);
+const PAID_SESSION_PREFIX = "paid_session:";
 
 function sendJson(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
@@ -151,6 +152,25 @@ function getQuantity(session) {
   return 1;
 }
 
+function getStoredUnits(record) {
+  const parsed = Number(record && record.units);
+  if (Number.isFinite(parsed) && parsed > 0) {
+    return Math.round(parsed);
+  }
+  return 1;
+}
+
+function getCustomerName(session) {
+  const metadata = session.metadata || {};
+  const customer = session.customer_details || {};
+  return customer.name || metadata.customer_name || "";
+}
+
+function getCustomerEmail(session) {
+  const customer = session.customer_details || {};
+  return customer.email || session.customer_email || "";
+}
+
 function getShippingAddress(session) {
   const details = session.shipping_details || {};
   const address = details.address || {};
@@ -185,9 +205,8 @@ function getShippingAddress(session) {
 
 function buildNotification(event, session) {
   const metadata = session.metadata || {};
-  const customer = session.customer_details || {};
-  const email = customer.email || session.customer_email || "No customer email";
-  const customerName = customer.name || metadata.customer_name || "No customer name";
+  const email = getCustomerEmail(session) || "No customer email";
+  const customerName = getCustomerName(session) || "No customer name";
   const paymentStatus = session.payment_status || "unknown";
   const quantity = getQuantity(session);
   const total = formatMoney(session.amount_total, session.currency);
@@ -216,6 +235,58 @@ function buildNotification(event, session) {
       `Stripe dashboard: https://dashboard.stripe.com/payments/${session.payment_intent || ""}`
     ].join("\n")
   };
+}
+
+async function recordPaidFounderOrder(env, event, session) {
+  if (!env.ESSENTIA_FUNDING) {
+    throw new Error("Funding KV namespace is not configured.");
+  }
+
+  const sessionKey = `${PAID_SESSION_PREFIX}${session.id}`;
+  const existing = await env.ESSENTIA_FUNDING.get(sessionKey, "json");
+
+  if (existing) {
+    return {
+      configured: true,
+      recorded: false,
+      duplicate: true,
+      reservedUnits: getStoredUnits(existing)
+    };
+  }
+
+  const record = {
+    sessionId: session.id,
+    eventId: event.id || null,
+    eventType: event.type,
+    units: getQuantity(session),
+    amountTotal: Number(session.amount_total || 0),
+    currency: String(session.currency || "usd").toUpperCase(),
+    customerEmail: getCustomerEmail(session),
+    customerName: getCustomerName(session),
+    paymentStatus: session.payment_status || "",
+    paymentIntent: session.payment_intent || "",
+    createdAt: new Date().toISOString()
+  };
+
+  await env.ESSENTIA_FUNDING.put(sessionKey, JSON.stringify(record));
+
+  return {
+    configured: true,
+    recorded: true,
+    duplicate: false,
+    reservedUnits: record.units
+  };
+}
+
+async function safeSendAdminNotification(env, event, session) {
+  try {
+    return await sendAdminNotification(env, event, session);
+  } catch (error) {
+    return {
+      configured: Boolean(env.RESEND_API_KEY),
+      error: getMessage(error, "Could not send the webhook notification email.")
+    };
+  }
 }
 
 async function sendAdminNotification(env, event, session) {
@@ -284,11 +355,26 @@ async function handleCheckoutEvent(event, env) {
     };
   }
 
-  const notification = await sendAdminNotification(env, event, session);
+  if (event.type === "checkout.session.async_payment_failed") {
+    const notification = await safeSendAdminNotification(env, event, session);
+    return {
+      handled: true,
+      action: "payment_failed_notified",
+      sessionId: session.id,
+      notification
+    };
+  }
+
+  const funding = await recordPaidFounderOrder(env, event, session);
+  const notification = funding.duplicate
+    ? { skipped: true, reason: "duplicate_session" }
+    : await safeSendAdminNotification(env, event, session);
+
   return {
     handled: true,
-    action: event.type === "checkout.session.async_payment_failed" ? "payment_failed_notified" : "paid_checkout_notified",
+    action: funding.duplicate ? "paid_checkout_already_recorded" : "paid_checkout_recorded",
     sessionId: session.id,
+    funding,
     notification
   };
 }

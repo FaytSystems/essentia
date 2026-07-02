@@ -52,7 +52,8 @@ The pre-order page includes a smart checkout flow:
 3. `/api/easyship-rates` calls Easyship from the server and returns live shipping choices.
 4. Customer chooses a rate.
 5. `/api/create-checkout-session` rechecks the Easyship rate server-side and opens Stripe Checkout with product plus shipping.
-6. Stripe sends Checkout events to `/api/stripe-webhook`, which verifies the Stripe signature and handles founder checkout notifications.
+6. Stripe sends Checkout events to `/api/stripe-webhook`, which verifies the Stripe signature, records each paid Checkout Session once in Cloudflare KV, and handles founder checkout notifications.
+7. The public funding meter fetches `/api/funding-status` and sums unique paid founder sessions against the 1,100-unit target.
 
 The founder promo video is stored at `assets/promo.mp4` and loops silently in the Founder Edition section.
 
@@ -78,6 +79,7 @@ Set these environment variables in your host:
 - `SUPPORT_EMAIL`
 - `RESEND_API_KEY`
 - `SUPPORT_FROM_EMAIL`
+- `FOUNDER_UNITS_OFFSET`
 
 Use `.env.example` as the template. Do not commit real API keys.
 
@@ -96,6 +98,8 @@ Listen for these Checkout events:
 - `checkout.session.async_payment_failed`
 
 After creating the destination, copy the signing secret into Cloudflare Pages as `STRIPE_WEBHOOK_SECRET`. If `RESEND_API_KEY` is configured, paid or failed founder checkout events send an admin notification to `SUPPORT_EMAIL`.
+
+The 1,100-unit meter uses the `ESSENTIA_FUNDING` Cloudflare KV namespace. Paid founder Checkout Sessions are stored under unique session keys, so Stripe retries do not double-count units. If any founder units were sold before the live counter existed, set `FOUNDER_UNITS_OFFSET` to that unit count.
 
 ## Country shipping test
 

@@ -79,14 +79,16 @@
   };
 
   const updateFunding = function () {
-    const units = funding.baseUnits;
-    const percent = Math.min(100, Math.round((units / funding.targetUnits) * 100));
+    const units = Math.max(0, Math.round(Number(funding.baseUnits) || 0));
+    const rawPercent = funding.targetUnits > 0 ? Math.min(100, (units / funding.targetUnits) * 100) : 0;
+    const displayPercent = units > 0 && rawPercent < 1 ? "<1%" : Math.round(rawPercent) + "%";
+    const fillPercent = rawPercent > 0 ? Math.max(rawPercent, 0.8) : 0;
 
     document.querySelectorAll("[data-target-amount]").forEach(function (node) {
       node.textContent = formatMoney(funding.targetRevenue);
     });
     document.querySelectorAll("[data-funded-percent]").forEach(function (node) {
-      node.textContent = percent + "%";
+      node.textContent = displayPercent;
     });
     document.querySelectorAll("[data-funded-units]").forEach(function (node) {
       node.textContent = units.toLocaleString("en-US");
@@ -101,8 +103,34 @@
       node.textContent = formatMoney(funding.msrp);
     });
     document.querySelectorAll("[data-meter-fill]").forEach(function (node) {
-      node.style.width = percent + "%";
+      node.style.width = fillPercent + "%";
     });
+  };
+
+  const loadFundingStatus = async function () {
+    if (!document.querySelector("[data-funded-units]")) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/funding-status", {
+        headers: {
+          "Accept": "application/json"
+        }
+      });
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        throw new Error(data.error || "Could not load funding status.");
+      }
+
+      funding.baseUnits = Math.max(0, Math.round(Number(data.reservedUnits) || 0));
+      funding.targetUnits = Math.max(1, Math.round(Number(data.targetUnits) || funding.targetUnits));
+      funding.targetRevenue = funding.price * funding.targetUnits;
+      updateFunding();
+    } catch (error) {
+      updateFunding();
+    }
   };
 
   const setPreset = function (key) {
@@ -228,4 +256,5 @@
   initSocialLinks();
   initCountryCodes();
   updateFunding();
+  loadFundingStatus();
 })();
