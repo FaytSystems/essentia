@@ -289,11 +289,14 @@ async function createStripeCheckoutSession(request, env, payload, selectedRate) 
   params.set("success_url", `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`);
   params.set("cancel_url", `${baseUrl}/preorder.html?checkout=cancelled`);
   params.set("customer_email", payload.customer.email);
+  params.set("billing_address_collection", "auto");
+  params.set("shipping_address_collection[allowed_countries][0]", payload.address.country);
+  params.set("phone_number_collection[enabled]", "true");
   params.set("line_items[0][quantity]", String(payload.quantity));
   params.set("line_items[0][price_data][currency]", "usd");
   params.set("line_items[0][price_data][unit_amount]", String(PRODUCT_PRICE_CENTS));
-  params.set("line_items[0][price_data][product_data][name]", "Essentia Founder Pre-order");
-  params.set("line_items[0][price_data][product_data][description]", "Smart humidity-regulating mason jar cap");
+  params.set("line_items[0][price_data][product_data][name]", "Essentia Founder Edition Pre-order");
+  params.set("line_items[0][price_data][product_data][description]", "Smart humidity-regulating mason jar cap from the first 1,100-unit Founder Edition batch.");
   params.set("shipping_options[0][shipping_rate_data][type]", "fixed_amount");
   params.set("shipping_options[0][shipping_rate_data][fixed_amount][amount]", String(selectedRate.totalChargeCents));
   params.set("shipping_options[0][shipping_rate_data][fixed_amount][currency]", "usd");
@@ -303,6 +306,7 @@ async function createStripeCheckoutSession(request, env, payload, selectedRate) 
   params.set("shipping_options[0][shipping_rate_data][delivery_estimate][maximum][unit]", "business_day");
   params.set("shipping_options[0][shipping_rate_data][delivery_estimate][maximum][value]", "21");
   params.set("metadata[order_type]", "founder_preorder");
+  params.set("metadata[founder_edition]", "first_1100_specialty_packaging_numbered_certificate");
   params.set("metadata[easyship_courier_id]", selectedRate.id);
   params.set("metadata[easyship_courier_name]", selectedRate.courierName.slice(0, 450));
   params.set("metadata[incoterms]", payload.incoterms);

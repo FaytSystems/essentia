@@ -378,6 +378,10 @@ h1,
   background: var(--white);
 }
 
+.founder-edition {
+  background: linear-gradient(180deg, #ffffff, var(--mist));
+}
+
 .section.dark {
   background: var(--night);
   color: var(--white);
@@ -499,6 +503,24 @@ h1,
 
 .product-frame.wide img {
   aspect-ratio: 16 / 10;
+}
+
+.promo-video-frame {
+  width: min(420px, 100%);
+  justify-self: center;
+  overflow: hidden;
+  border: 1px solid rgba(23, 33, 28, 0.18);
+  border-radius: 8px;
+  background: var(--night);
+  box-shadow: var(--shadow);
+}
+
+.promo-video-frame video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  background: var(--night);
 }
 
 .check-list,
@@ -774,6 +796,10 @@ button.preset-card {
   font-size: 1.7rem;
 }
 
+.reserve-detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .form-grid {
   display: grid;
   gap: 14px;
@@ -791,9 +817,18 @@ button.preset-card {
   gap: 7px;
 }
 
-.field span {
+.field > span {
   font-size: 0.85rem;
   font-weight: 850;
+}
+
+.field small {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.address-lookup-wrap {
+  position: relative;
 }
 
 .field input,
@@ -811,6 +846,58 @@ button.preset-card {
 .field textarea {
   min-height: 92px;
   resize: vertical;
+}
+
+.address-suggestions {
+  position: absolute;
+  z-index: 24;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  display: none;
+  max-height: 248px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.address-suggestions.is-visible {
+  display: grid;
+}
+
+.address-suggestion {
+  width: 100%;
+  min-height: auto;
+  padding: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--white);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.address-suggestion:last-child {
+  border-bottom: 0;
+}
+
+.address-suggestion:hover,
+.address-suggestion:focus {
+  background: var(--mist);
+  outline: none;
+}
+
+.address-suggestion strong,
+.address-suggestion span {
+  display: block;
+}
+
+.address-suggestion span {
+  color: var(--muted);
+  font-size: 0.82rem;
 }
 
 .confirmation {
@@ -1012,6 +1099,7 @@ button.preset-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 24px;
 }
 
@@ -1025,6 +1113,31 @@ button.preset-card {
   color: var(--muted);
   font-weight: 750;
   text-decoration: none;
+}
+
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-social a {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--sage-dark);
+  font-size: 0.88rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.footer-social a:hover {
+  border-color: var(--sage);
+  background: var(--mist);
 }
 
 .note {
@@ -1184,6 +1297,7 @@ button.preset-card {
 
   .preset-grid,
   .feature-grid,
+  .reserve-detail-grid,
   .cost-grid {
     grid-template-columns: 1fr;
   }

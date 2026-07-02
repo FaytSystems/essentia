@@ -6,6 +6,8 @@
   const rateOptions = document.querySelector("[data-rate-options]");
   const checkoutButton = document.querySelector("[data-checkout-button]");
   const rateButton = document.querySelector("[data-rate-button]");
+  const addressSearchInput = form ? form.querySelector("[data-address-search]") : null;
+  const addressSuggestions = form ? form.querySelector("[data-address-suggestions]") : null;
 
   if (!form || !statusNode || !rateOptions || !checkoutButton) {
     return;
@@ -14,6 +16,16 @@
   let selectedRateId = null;
   let currentPayload = null;
   let currentRates = [];
+  let addressSuggestTimer = 0;
+  let addressSuggestController = null;
+
+  const addressFields = {
+    line1: form.elements.line1,
+    city: form.elements.city,
+    state: form.elements.state,
+    postalCode: form.elements.postalCode,
+    country: form.elements.country
+  };
 
   const formatMoney = function (cents, currency) {
     return new Intl.NumberFormat("en-US", {
@@ -79,6 +91,131 @@
   const setStatus = function (message, tone) {
     statusNode.textContent = message || "";
     statusNode.className = "checkout-status" + (tone ? " " + tone : "");
+  };
+
+  const resetRateSelection = function (message) {
+    if (!currentRates.length && !selectedRateId) {
+      return;
+    }
+
+    currentRates = [];
+    selectedRateId = null;
+    rateOptions.innerHTML = "";
+    checkoutButton.disabled = true;
+    checkoutButton.textContent = "Continue to Stripe Checkout";
+    setStatus(message || "Recalculate shipping before checkout.", "");
+  };
+
+  const setAddressExpanded = function (isExpanded) {
+    if (addressSearchInput) {
+      addressSearchInput.setAttribute("aria-expanded", String(isExpanded));
+    }
+  };
+
+  const clearAddressSuggestions = function () {
+    if (!addressSuggestions) {
+      return;
+    }
+
+    addressSuggestions.innerHTML = "";
+    addressSuggestions.classList.remove("is-visible");
+    setAddressExpanded(false);
+  };
+
+  const fillAddressSuggestion = function (suggestion) {
+    if (!suggestion) {
+      return;
+    }
+
+    if (addressFields.line1) {
+      addressFields.line1.value = suggestion.line1 || "";
+    }
+    if (addressFields.city) {
+      addressFields.city.value = suggestion.city || "";
+    }
+    if (addressFields.state) {
+      addressFields.state.value = suggestion.state || "";
+    }
+    if (addressFields.postalCode) {
+      addressFields.postalCode.value = suggestion.postalCode || "";
+    }
+    if (addressFields.country) {
+      addressFields.country.value = suggestion.country || "US";
+    }
+    if (addressSearchInput) {
+      addressSearchInput.value = suggestion.label || suggestion.line1 || "";
+    }
+
+    clearAddressSuggestions();
+    resetRateSelection("Address filled. Calculate shipping to see live rates.");
+    setStatus("Address filled. Calculate shipping to see live rates.", "");
+  };
+
+  const renderAddressSuggestions = function (suggestions) {
+    if (!addressSuggestions) {
+      return;
+    }
+
+    addressSuggestions.innerHTML = "";
+
+    if (!suggestions.length) {
+      clearAddressSuggestions();
+      return;
+    }
+
+    suggestions.forEach(function (suggestion) {
+      const option = document.createElement("button");
+      const line = document.createElement("strong");
+      const detail = document.createElement("span");
+
+      option.type = "button";
+      option.className = "address-suggestion";
+      option.setAttribute("role", "option");
+      line.textContent = suggestion.line1 || suggestion.label || "Address match";
+      detail.textContent = [suggestion.city, suggestion.state, suggestion.postalCode].filter(Boolean).join(", ");
+      option.appendChild(line);
+      option.appendChild(detail);
+      option.addEventListener("click", function () {
+        fillAddressSuggestion(suggestion);
+      });
+
+      addressSuggestions.appendChild(option);
+    });
+
+    addressSuggestions.classList.add("is-visible");
+    setAddressExpanded(true);
+  };
+
+  const requestAddressSuggestions = async function (query) {
+    if (!addressSearchInput || !addressSuggestions || query.length < 5) {
+      clearAddressSuggestions();
+      return;
+    }
+
+    if (addressSuggestController) {
+      addressSuggestController.abort();
+    }
+
+    addressSuggestController = new AbortController();
+
+    try {
+      const response = await fetch("/api/address-suggest?q=" + encodeURIComponent(query), {
+        signal: addressSuggestController.signal
+      });
+      const data = await response.json().catch(function () {
+        return {};
+      });
+
+      if (!response.ok) {
+        throw new Error(getMessage(data, "Could not load address suggestions."));
+      }
+
+      renderAddressSuggestions(data.suggestions || []);
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        clearAddressSuggestions();
+      }
+    }
   };
 
   const getPayload = function () {
@@ -148,6 +285,43 @@
     rateOptions.appendChild(fragment);
     setStatus("Choose a shipping option. The selected quote will be rechecked before Stripe opens.", "success");
   };
+
+  if (addressSearchInput && addressSuggestions) {
+    addressSearchInput.addEventListener("input", function () {
+      window.clearTimeout(addressSuggestTimer);
+      const query = addressSearchInput.value.trim();
+
+      if (query.length < 5) {
+        clearAddressSuggestions();
+        return;
+      }
+
+      addressSuggestTimer = window.setTimeout(function () {
+        requestAddressSuggestions(query);
+      }, 350);
+    });
+
+    addressSearchInput.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        clearAddressSuggestions();
+      }
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!addressSuggestions.contains(event.target) && event.target !== addressSearchInput) {
+        clearAddressSuggestions();
+      }
+    });
+  }
+
+  form.addEventListener("input", function (event) {
+    const target = event.target;
+    if (!target || target === addressSearchInput || target.name === "easyshipRate") {
+      return;
+    }
+
+    resetRateSelection("Details changed. Recalculate shipping before checkout.");
+  });
 
   form.addEventListener("submit", async function (event) {
     event.preventDefault();

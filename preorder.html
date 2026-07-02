@@ -46,6 +46,28 @@
         </div>
       </section>
 
+      <section class="section founder-edition">
+        <div class="section-inner split">
+          <figure class="promo-video-frame">
+            <video src="assets/promo.mp4" autoplay muted loop playsinline preload="metadata" poster="assets/essentia-hero.png" aria-label="Essentia founder promo reel"></video>
+          </figure>
+          <div>
+            <p class="section-kicker">Founder Edition</p>
+            <h2>The first 1,100 units get the launch-batch treatment.</h2>
+            <p>Founder Edition reservations are planned as the first numbered Essentia batch: specialty launch packaging, a numbered founder certificate, and first access before the product moves toward the planned <span data-msrp>$279</span> MSRP.</p>
+            <ul class="check-list">
+              <li>Specialty packaging reserved for the founding run.</li>
+              <li>Numbered certificate for each of the first 1,100 units.</li>
+              <li>Founder price locked at <span data-founder-price>$169</span> while the batch is open.</li>
+            </ul>
+            <div class="button-row">
+              <a class="button primary" href="#reserve">Reserve Founder Edition</a>
+              <a class="button secondary" href="https://www.instagram.com/reel/DaRVroFPEoH/" target="_blank" rel="noopener">View the IG post</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section">
         <div class="section-inner reserve-layout">
           <div class="stack">
@@ -69,7 +91,7 @@
               </div>
             </div>
 
-            <div class="feature-grid">
+            <div class="feature-grid reserve-detail-grid">
               <article class="feature-card">
                 <h3>Founder price</h3>
                 <p><strong data-founder-price>$169</strong> per cap in the founding batch, compared with planned <span data-msrp>$279</span> MSRP.</p>
@@ -106,6 +128,14 @@
                 <span>Email</span>
                 <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
               </label>
+              <label class="field address-lookup-field">
+                <span>Address lookup</span>
+                <div class="address-lookup-wrap">
+                  <input name="addressSearch" type="search" autocomplete="street-address" placeholder="Start typing a US delivery address" aria-autocomplete="list" aria-expanded="false" aria-controls="address-suggestions" data-address-search>
+                  <div class="address-suggestions" id="address-suggestions" role="listbox" data-address-suggestions></div>
+                </div>
+                <small>Choose a match to fill street, city, state, ZIP, and country.</small>
+              </label>
               <label class="field">
                 <span>Address line 1</span>
                 <input name="line1" type="text" autocomplete="address-line1" placeholder="Street address" required>
@@ -131,7 +161,7 @@
                 </label>
                 <label class="field">
                   <span>Country code</span>
-                  <input name="country" type="text" autocomplete="country" list="country-codes" maxlength="2" placeholder="US" required>
+                  <input name="country" type="text" autocomplete="country" list="country-codes" maxlength="2" placeholder="US" value="US" required>
                   <datalist id="country-codes">
                     <option value="US">United States</option>
                     <option value="CA">Canada</option>

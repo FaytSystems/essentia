@@ -20,6 +20,7 @@ Essentia is a static launch site for a smart humidity-regulating mason jar cap.
 - Planned MSRP: `$279`
 - First-run quantity: `1,100` units
 - Funding target: `$185,900`
+- Founder Edition: first `1,100` units include specialty launch packaging and a numbered founder certificate.
 
 The funding target is modeled as:
 
@@ -47,9 +48,12 @@ Battery-life and cost figures are pre-production estimates and should be updated
 The pre-order page includes a smart checkout flow:
 
 1. Customer enters address and quantity.
-2. `/api/easyship-rates` calls Easyship from the server and returns live shipping choices.
-3. Customer chooses a rate.
-4. `/api/create-checkout-session` rechecks the Easyship rate server-side and opens Stripe Checkout with product plus shipping.
+2. Optional US address lookup uses `/api/address-suggest` to fill street, city, state, ZIP, and country from a selected match.
+3. `/api/easyship-rates` calls Easyship from the server and returns live shipping choices.
+4. Customer chooses a rate.
+5. `/api/create-checkout-session` rechecks the Easyship rate server-side and opens Stripe Checkout with product plus shipping.
+
+The founder promo video is stored at `assets/promo.mp4` and loops silently in the Founder Edition section.
 
 This requires Cloudflare Pages Functions or another serverless host. GitHub Pages cannot run the `/api` functions.
 

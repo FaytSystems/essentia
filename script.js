@@ -50,6 +50,13 @@
     }
   };
 
+  const socialLinks = [
+    { label: "X", url: "https://x.com/BudCurer" },
+    { label: "Instagram", url: "https://www.instagram.com/essentia_budcurer/" },
+    { label: "Facebook", url: "https://www.facebook.com/profile.php?id=61591247774916" },
+    { label: "YouTube", url: "https://www.youtube.com/@EssentiaBudCurer" }
+  ];
+
   const iconSvg = {
     herbs: '<svg viewBox="0 0 120 90" aria-hidden="true"><path d="M58 76C56 55 64 34 80 18" fill="none" stroke="#5f8a6d" stroke-width="6" stroke-linecap="round"/><path d="M68 45c16-8 26-7 33-1-8 11-21 12-33 1Z" fill="#76a87d"/><path d="M55 57c-17-3-26 2-31 10 11 7 23 4 31-10Z" fill="#86b98c"/><path d="M74 31c-8-14-18-19-28-18-1 13 9 22 28 18Z" fill="#9bc575"/></svg>',
     flower: '<svg viewBox="0 0 120 90" aria-hidden="true"><circle cx="60" cy="45" r="10" fill="#dba852"/><path d="M60 9c9 15 9 28 0 36-9-8-9-21 0-36ZM60 81c-9-15-9-28 0-36 9 8 9 21 0 36ZM24 24c17 4 28 11 31 23-12 3-24-5-31-23ZM96 66c-17-4-28-11-31-23 12-3 24 5 31 23ZM96 24c-7 18-19 26-31 23 3-12 14-19 31-23ZM24 66c7-18 19-26 31-23-3 12-14 19-31 23Z" fill="#5f8a6d"/></svg>',
@@ -170,7 +177,30 @@
     }
   };
 
+  const initSocialLinks = function () {
+    const footer = document.querySelector(".site-footer .footer-inner");
+    if (!footer || footer.querySelector(".footer-social")) {
+      return;
+    }
+
+    const nav = document.createElement("nav");
+    nav.className = "footer-social";
+    nav.setAttribute("aria-label", "Social media");
+
+    socialLinks.forEach(function (item) {
+      const link = document.createElement("a");
+      link.href = item.url;
+      link.textContent = item.label;
+      link.target = "_blank";
+      link.rel = "noopener";
+      nav.appendChild(link);
+    });
+
+    footer.appendChild(nav);
+  };
+
   initNavigation();
   initPresets();
+  initSocialLinks();
   updateFunding();
 })();
