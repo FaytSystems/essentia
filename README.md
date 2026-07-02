@@ -47,13 +47,16 @@ Battery-life and cost figures are pre-production estimates and should be updated
 
 The pre-order page includes a smart checkout flow:
 
-1. Customer enters address and quantity.
+1. Customer enters address and quantity. The country field supports a broad global ISO country-code list.
 2. Optional US address lookup uses `/api/address-suggest` to fill street, city, state, ZIP, and country from a selected match.
 3. `/api/easyship-rates` calls Easyship from the server and returns live shipping choices.
 4. Customer chooses a rate.
 5. `/api/create-checkout-session` rechecks the Easyship rate server-side and opens Stripe Checkout with product plus shipping.
+6. Stripe sends Checkout events to `/api/stripe-webhook`, which verifies the Stripe signature and handles founder checkout notifications.
 
 The founder promo video is stored at `assets/promo.mp4` and loops silently in the Founder Edition section.
+
+Global checkout availability is determined by the live Easyship quote for the exact destination address and by carrier restrictions for batteries, duties, and import rules.
 
 This requires Cloudflare Pages Functions or another serverless host. GitHub Pages cannot run the `/api` functions.
 
@@ -68,6 +71,7 @@ Set these environment variables in your host:
 - `EASYSHIP_ORIGIN_POSTAL_CODE`
 - `EASYSHIP_ORIGIN_COUNTRY`
 - `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
 - `SITE_URL`
 - `SHIPPING_HANDLING_CENTS`
 - `SHIPPING_TEST_TOKEN`
@@ -78,6 +82,20 @@ Set these environment variables in your host:
 Use `.env.example` as the template. Do not commit real API keys.
 
 The support form uses `/api/support-message`. Without `RESEND_API_KEY`, the page still shows and opens the direct support email link: `faytsignup@gmail.com`.
+
+## Stripe webhook
+
+Register this HTTPS endpoint in Stripe Workbench:
+
+`https://essentia-92f.pages.dev/api/stripe-webhook`
+
+Listen for these Checkout events:
+
+- `checkout.session.completed`
+- `checkout.session.async_payment_succeeded`
+- `checkout.session.async_payment_failed`
+
+After creating the destination, copy the signing secret into Cloudflare Pages as `STRIPE_WEBHOOK_SECRET`. If `RESEND_API_KEY` is configured, paid or failed founder checkout events send an admin notification to `SUPPORT_EMAIL`.
 
 ## Country shipping test
 

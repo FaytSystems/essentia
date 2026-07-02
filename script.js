@@ -57,6 +57,8 @@
     { label: "YouTube", url: "https://www.youtube.com/@EssentiaBudCurer" }
   ];
 
+  const globalCountryCodes = "AD,AE,AF,AG,AI,AL,AM,AO,AR,AS,AT,AU,AW,AX,AZ,BA,BB,BD,BE,BF,BG,BH,BI,BJ,BL,BM,BN,BO,BQ,BR,BS,BT,BW,BY,BZ,CA,CC,CD,CF,CG,CH,CI,CK,CL,CM,CN,CO,CR,CV,CW,CX,CY,CZ,DE,DJ,DK,DM,DO,DZ,EC,EE,EG,EH,ER,ES,ET,FI,FJ,FK,FM,FO,FR,GA,GB,GD,GE,GF,GG,GH,GI,GL,GM,GN,GP,GQ,GR,GS,GT,GU,GW,GY,HK,HN,HR,HT,HU,ID,IE,IL,IM,IN,IO,IQ,IS,IT,JE,JM,JO,JP,KE,KG,KH,KI,KM,KN,KR,KW,KY,KZ,LA,LB,LC,LI,LK,LR,LS,LT,LU,LV,MA,MC,MD,ME,MF,MG,MH,MK,ML,MM,MN,MO,MP,MQ,MR,MS,MT,MU,MV,MW,MX,MY,MZ,NA,NC,NE,NF,NG,NI,NL,NO,NP,NR,NU,NZ,OM,PA,PE,PF,PG,PH,PK,PL,PM,PN,PR,PS,PT,PW,PY,QA,RE,RO,RS,RW,SA,SB,SC,SE,SG,SH,SI,SJ,SK,SL,SM,SN,SR,SS,ST,SV,SX,SZ,TC,TD,TG,TH,TJ,TK,TL,TM,TN,TO,TR,TT,TV,TW,TZ,UA,UG,UM,US,UY,UZ,VA,VC,VG,VI,VN,VU,WF,WS,YT,ZA,ZM,ZW".split(",");
+
   const iconSvg = {
     herbs: '<svg viewBox="0 0 120 90" aria-hidden="true"><path d="M58 76C56 55 64 34 80 18" fill="none" stroke="#5f8a6d" stroke-width="6" stroke-linecap="round"/><path d="M68 45c16-8 26-7 33-1-8 11-21 12-33 1Z" fill="#76a87d"/><path d="M55 57c-17-3-26 2-31 10 11 7 23 4 31-10Z" fill="#86b98c"/><path d="M74 31c-8-14-18-19-28-18-1 13 9 22 28 18Z" fill="#9bc575"/></svg>',
     flower: '<svg viewBox="0 0 120 90" aria-hidden="true"><circle cx="60" cy="45" r="10" fill="#dba852"/><path d="M60 9c9 15 9 28 0 36-9-8-9-21 0-36ZM60 81c-9-15-9-28 0-36 9 8 9 21 0 36ZM24 24c17 4 28 11 31 23-12 3-24-5-31-23ZM96 66c-17-4-28-11-31-23 12-3 24 5 31 23ZM96 24c-7 18-19 26-31 23 3-12 14-19 31-23ZM24 66c7-18 19-26 31-23-3 12-14 19-31 23Z" fill="#5f8a6d"/></svg>',
@@ -199,8 +201,31 @@
     footer.appendChild(nav);
   };
 
+  const initCountryCodes = function () {
+    const list = document.querySelector("#country-codes");
+    if (!list) {
+      return;
+    }
+
+    const displayNames = typeof Intl.DisplayNames === "function"
+      ? new Intl.DisplayNames(["en"], { type: "region" })
+      : null;
+    const fragment = document.createDocumentFragment();
+
+    list.innerHTML = "";
+    globalCountryCodes.forEach(function (code) {
+      const option = document.createElement("option");
+      option.value = code;
+      option.textContent = displayNames ? displayNames.of(code) || code : code;
+      fragment.appendChild(option);
+    });
+
+    list.appendChild(fragment);
+  };
+
   initNavigation();
   initPresets();
   initSocialLinks();
+  initCountryCodes();
   updateFunding();
 })();

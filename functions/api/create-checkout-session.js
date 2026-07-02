@@ -307,6 +307,8 @@ async function createStripeCheckoutSession(request, env, payload, selectedRate) 
   params.set("shipping_options[0][shipping_rate_data][delivery_estimate][maximum][value]", "21");
   params.set("metadata[order_type]", "founder_preorder");
   params.set("metadata[founder_edition]", "first_1100_specialty_packaging_numbered_certificate");
+  params.set("metadata[quantity]", String(payload.quantity));
+  params.set("metadata[customer_name]", payload.customer.name.slice(0, 450));
   params.set("metadata[easyship_courier_id]", selectedRate.id);
   params.set("metadata[easyship_courier_name]", selectedRate.courierName.slice(0, 450));
   params.set("metadata[incoterms]", payload.incoterms);
